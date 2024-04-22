@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
         Schema::enableForeignKeyConstraints();
 
         User::factory()->create([
-            'username'          => 'admin',
+            'username'          => 'Admin',
             'password'          => Hash::make('admin'),
         ]);
     }

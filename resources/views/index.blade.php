@@ -1,4 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.guest')
+
+@section('subtitle', 'Welcome')
 
 @section('content')
     <section id="hero">
@@ -30,7 +32,7 @@
                             <h2 class="animate__animated animate__fadeInDown">Lorem Ipsum Dolor</h2>
                             <p class="animate__animated animate__fadeInUp">Ut velit est quam dolor ad a aliquid qui
                                 aliquid. Sequi ea ut et est quaerat sequi nihil ut aliquam. Occaecati alias dolorem
-                                mollitia ut. Similique ea voluptatem. Esse doloremque accusamus repellendus deleniti
+                                mollitia ut. Similique ea voluptatem. doloremque accusamus repellendus deleniti
                                 vel. Minus et tempore modi architecto.</p>
                             <a href="/" class="btn-get-started animate__animated animate__fadeInUp scrollto">Read
                                 More</a>

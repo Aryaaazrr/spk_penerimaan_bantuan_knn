@@ -10,7 +10,7 @@
             <ul>
                 <li><a href="/" class="active">Home</a></li>
                 <li><a href="/">Info Penerimaan</a></li>
-                <li><a href="/" class="getstarted">Login Admin</a></li>
+                <li><a href="{{ route('login') }}" class="getstarted">Login Admin</a></li>
             </ul>
             <i class="bi bi-list mobile-nav-toggle"></i>
         </nav>
