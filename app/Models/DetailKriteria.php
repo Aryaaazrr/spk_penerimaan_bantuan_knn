@@ -9,7 +9,6 @@ class DetailKriteria extends Model
 {
     use HasFactory;
     protected $table = 'detail_kriteria';
-    protected $primaryKey = 'id';
     protected $guarded = [];
     protected $casts = [
         'created_at' => 'datetime',
