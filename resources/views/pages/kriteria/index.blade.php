@@ -184,6 +184,11 @@
                         }
                     }
                 ],
+                rowCallback: function(row, data, index) {
+                    var dt = this.api();
+                    $(row).attr('data-id', data.id);
+                    $('td:eq(0)', row).html(dt.page.info().start + index + 1);
+                }
             });
             $('#modal-edit').on('show.bs.modal', function(event) {
                 var button = $(event.relatedTarget);
@@ -197,7 +202,18 @@
                 modal.find('.modal-body #keterangan').val(keterangan);
             });
 
+            $('.datatable-input').on('input', function() {
+                var searchText = $(this).val().toLowerCase();
 
+                $('.table tr').each(function() {
+                    var rowData = $(this).text().toLowerCase();
+                    if (rowData.indexOf(searchText) === -1) {
+                        $(this).hide();
+                    } else {
+                        $(this).show();
+                    }
+                });
+            });
         });
 
         function confirmDelete(id) {
@@ -219,12 +235,13 @@
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
                         success: function(response) {
+                            $('#myTable').DataTable().row($('#myTable').find('tr[data-id="' + id +
+                                '"]')).remove().draw();
                             Swal.fire(
                                 'Terhapus!',
                                 'Data berhasil dihapus.',
                                 'success'
                             );
-                            $('#myTable').DataTable().ajax.reload();
                         },
                         error: function(xhr, status, error) {
                             Swal.fire(

@@ -113,13 +113,12 @@ class KriteriaController extends Controller
      */
     public function destroy(string $id)
     {
-        $kriteria = Kriteria::find($id);
-
-        if (!$kriteria) {
-            return back()->with(['error' => 'Kriteria tidak ditemukan']);
+        try {
+            $kriteria = Kriteria::findOrFail($id);
+            $kriteria->delete();
+            return response()->json(['message' => 'Data kriteria berhasil dihapus'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Terjadi kesalahan saat menghapus data'], 500);
         }
-
-        $kriteria->delete();
-        return redirect()->route('kriteria')->with(['success' => 'Kriteria berhasil dihapus']);
     }
 }
