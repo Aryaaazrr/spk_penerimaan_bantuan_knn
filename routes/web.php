@@ -31,16 +31,19 @@ Route::middleware('auth')->group(function () {
     Route::get('logout', [AuthController::class, 'destroy'])->name('logout');
 
     Route::get('dashboard', [AdminController::class, 'index'])->name('dashboard');
-    
+
     Route::get('kriteria', [KriteriaController::class, 'index'])->name('kriteria');
-    
+    Route::post('kriteria', [KriteriaController::class, 'store'])->name('kriteria.store');
+    Route::put('kriteria/update', [KriteriaController::class, 'update'])->name('kriteria.update');
+    Route::delete   ('kriteria/{id}', [KriteriaController::class, 'destroy'])->name('kriteria.destroy');
+
     Route::get('sub-kriteria', [SubKriteriaController::class, 'index'])->name('subkriteria');
-    
+
     Route::get('training', [TrainingController::class, 'index'])->name('training');
-    
+
     Route::get('analisa', [AnalisaController::class, 'index'])->name('analisa');
-    
+
     Route::get('laporan', [LaporanController::class, 'index'])->name('laporan');
-    
+
     Route::get('profile', [ProfileController::class, 'index'])->name('profile');
 });

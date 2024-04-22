@@ -3,6 +3,12 @@
 @section('subtitle', 'Dashboard')
 
 @section('content')
+    <!-- Preloader -->
+    <div class="preloader flex-column justify-content-center align-items-center">
+        <img class="animation__shake" src="{{ asset('dist/img/LOGO POLITEKNIK NEGERI  JEMBER.png') }}"
+            alt="LogoPoliteknikNegeriJember" height="60" width="60">
+    </div>
+
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <div class="content-header">
