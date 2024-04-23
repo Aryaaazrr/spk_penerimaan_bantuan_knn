@@ -45,40 +45,29 @@
                             <div class="card-body">
                                 <div class="tab-content">
                                     <div class="active tab-pane" id="settings">
-                                        <form class="form-horizontal">
+                                        <form class="form-horizontal" action="{{ route('profile.update') }}" method="POST">
+                                            @csrf
+                                            @method('PUT')
                                             <div class="form-group row">
-                                                <label for="inputName" class="col-sm-2 col-form-label">Name</label>
+                                                <label for="username" class="col-sm-2 col-form-label">Username</label>
                                                 <div class="col-sm-10">
-                                                    <input type="email" class="form-control" id="inputName"
-                                                        placeholder="Name">
+                                                    <input type="text" class="form-control" name="username"
+                                                        id="username" placeholder="Username">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
-                                                <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
+                                                <label for="password" class="col-sm-2 col-form-label">Password</label>
                                                 <div class="col-sm-10">
-                                                    <input type="email" class="form-control" id="inputEmail"
-                                                        placeholder="Email">
+                                                    <input type="password" class="form-control" name="password"
+                                                        id="password" placeholder="Password">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
-                                                <label for="inputName2" class="col-sm-2 col-form-label">Name</label>
+                                                <label for="confim-password" class="col-sm-2 col-form-label">Konfirmasi
+                                                    Password</label>
                                                 <div class="col-sm-10">
-                                                    <input type="text" class="form-control" id="inputName2"
-                                                        placeholder="Name">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label for="inputExperience"
-                                                    class="col-sm-2 col-form-label">Experience</label>
-                                                <div class="col-sm-10">
-                                                    <textarea class="form-control" id="inputExperience" placeholder="Experience"></textarea>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label for="inputSkills" class="col-sm-2 col-form-label">Skills</label>
-                                                <div class="col-sm-10">
-                                                    <input type="text" class="form-control" id="inputSkills"
-                                                        placeholder="Skills">
+                                                    <input type="password" class="form-control" name="confirm-password"
+                                                        id="confirm-password" placeholder="Konfirmasi Password">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
@@ -88,20 +77,33 @@
                                             </div>
                                         </form>
                                     </div>
-                                    <!-- /.tab-pane -->
                                 </div>
-                                <!-- /.tab-content -->
-                            </div><!-- /.card-body -->
+                            </div>
                         </div>
-                        <!-- /.card -->
                     </div>
-                    <!-- /.col -->
                 </div>
-                <!-- /.row -->
-            </div><!-- /.container-fluid -->
+            </div>
         </section>
-        <!-- /.content -->
     </div>
+
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: '{{ session('success') }}'
+            });
+        </script>
+    @endif
+    @if ($errors->any())
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Oopss...',
+                text: '{{ $errors->first() }}'
+            });
+        </script>
+    @endif
 
     <script>
         $(document).ready(function() {

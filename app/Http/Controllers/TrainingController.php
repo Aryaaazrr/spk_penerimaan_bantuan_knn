@@ -2,16 +2,35 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DetailKriteria;
+use App\Models\Training;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Yajra\DataTables\DataTables;
 
 class TrainingController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('pages.training.index');
+        $training = Training::all();
+        $usia = DetailKriteria::where('kriteria', 'Usia')->get();
+        $pekerjaan = DetailKriteria::where('kriteria', 'Pekerjaan')->get();
+        $gaji = DetailKriteria::where('kriteria', 'Gaji')->get();
+        $tanggungan = DetailKriteria::where('kriteria', 'Tanggungan')->get();
+        $statusRumah = DetailKriteria::where('kriteria', 'Status Rumah')->get();
+
+        if ($request->ajax()) {
+            return DataTables::of($training)
+                ->addColumn('DT_RowIndex', function ($training) {
+                    return $training->id;
+                })
+                ->toJson();
+        }
+
+        return view('pages.training.index', ['usia' => $usia, 'pekerjaan' => $pekerjaan, 'gaji' => $gaji, 'tanggungan' => $tanggungan, 'status_rumah' => $statusRumah]);
     }
 
     /**
@@ -27,7 +46,31 @@ class TrainingController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'nama' => 'required',
+            'usia' => 'required',
+            'pekerjaan' => 'required',
+            'gaji' => 'required',
+            'tanggungan' => 'required',
+            'status_rumah' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $detail = new Training();
+        $detail->nama = $request->nama;
+        $detail->usia = $request->usia;
+        $detail->pekerjaan = $request->pekerjaan;
+        $detail->gaji = $request->gaji;
+        $detail->tanggungan = $request->tanggungan;
+        $detail->status_rumah = $request->status_rumah;
+        $detail->save();
+
+        return redirect()->route('training')->with('success', 'Data training berhasil ditambahkan.');
     }
 
     /**

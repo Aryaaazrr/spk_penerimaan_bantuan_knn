@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('gaji');
             $table->string('tanggungan');
             $table->string('status_rumah');
-            $table->enum('keputusan', ['Layak', 'Tidak Layak']);
+            $table->enum('keputusan', ['Layak', 'Tidak Layak'])->nullable();
             $table->timestamps();
         });
     }

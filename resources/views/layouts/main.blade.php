@@ -50,15 +50,10 @@
         @include('partials.sidebar')
 
         @yield('content')
-        <!-- Control Sidebar -->
         <aside class="control-sidebar control-sidebar-dark">
-            <!-- Control sidebar content goes here -->
         </aside>
-        <!-- /.control-sidebar -->
     </div>
-    <!-- ./wrapper -->
 
-    <!-- /.content-wrapper -->
     <footer class="main-footer">
         <strong>Copyright &copy; <a href="/">KLASIFIKASI PRIORITAS PENERIMA BANTUAN PANGAN NON TUNAI (BPNT) DI
                 DESA TAMAN BONDOWOSO MENGGUNAKAN METODE KNN (K-NEAREST NEIGHBORS)</a>.</strong>
