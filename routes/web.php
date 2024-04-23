@@ -43,10 +43,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('sub-kriteria/{id}', [SubKriteriaController::class, 'destroy'])->name('subkriteria.destroy');
 
     Route::get('training', [TrainingController::class, 'index'])->name('training');
+    Route::post('training', [TrainingController::class, 'store'])->name('training.store');
+    Route::put('training/update', [TrainingController::class, 'update'])->name('training.update');
+    Route::delete('training/{id}', [TrainingController::class, 'destroy'])->name('training.destroy');
 
     Route::get('analisa', [AnalisaController::class, 'index'])->name('analisa');
 
     Route::get('laporan', [LaporanController::class, 'index'])->name('laporan');
 
     Route::get('profile', [ProfileController::class, 'index'])->name('profile');
+    Route::put('profile/update', [ProfileController::class, 'update'])->name('profile.update');
 });

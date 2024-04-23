@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class ProfileController extends Controller
 {
@@ -49,9 +53,26 @@ class ProfileController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        //
+        $id = Auth::id();
+        $user = User::find($id);
+
+        if (!$user) {
+            return redirect()->back()->with('error', 'User not found');
+        }
+
+        $request->validate([
+            'username' => 'required',
+            'password' => 'required|min:6',
+            'confirm-password' => 'required|same:password',
+        ]);
+
+        $user->username = $request->input('username');
+        $user->password = Hash::make($request->input('password'));
+        $user->save();
+
+        return redirect()->back()->with('success', 'Profil berhasil diperbarui');
     }
 
     /**
