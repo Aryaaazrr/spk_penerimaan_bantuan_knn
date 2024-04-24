@@ -21,7 +21,7 @@ class SubKriteriaController extends Controller
         if ($request->ajax()) {
             return DataTables::of($detail_kriteria)
                 ->addColumn('DT_RowIndex', function ($detail_kriteria) {
-                    return $detail_kriteria->id;
+                    return $detail_kriteria->id_kriteria;
                 })
                 ->toJson();
         }
@@ -110,7 +110,7 @@ class SubKriteriaController extends Controller
         $kriteria = Kriteria::find($request->kriteria);
         $nama = $kriteria->nama;
 
-        $detail = DetailKriteria::where('id', $request->id_subkriteria)->first();
+        $detail = DetailKriteria::where('id_subkriteria', $request->id_subkriteria)->first();
         $detail->id_kriteria = $request->kriteria;
         $detail->subkriteria = $request->subkriteria;
         $detail->kriteria = $nama;

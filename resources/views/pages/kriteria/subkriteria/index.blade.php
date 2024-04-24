@@ -82,7 +82,7 @@
                                         <tr>
                                             <th>No</th>
                                             <th>SubKriteria</th>
-                                            <th>Nama</th>
+                                            <th>Kriteria</th>
                                             <th>Nilai</th>
                                             <th>Opsi</th>
                                         </tr>
@@ -197,14 +197,14 @@
                                 '<div class="col-auto">' +
                                 '<button type="button" class="btn btn-warning m-1" data-toggle="modal"' +
                                 'data-target="#modal-edit" data-id="' + data
-                                .id + '" data-subkriteria="' + data.subkriteria +
+                                .id_subkriteria + '" data-subkriteria="' + data.subkriteria +
                                 '" data-kriteria="' +
                                 data.id_kriteria + '" data-nilai="' + data.nilai + '">' +
                                 'Edit' +
                                 '</button>' +
                                 '<button type="button" class="btn btn-danger m-1" onclick="confirmDelete(' +
-                                data.id + ')"' +
-                                'data-id="' + data.id +
+                                data.id_subkriteria + ')"' +
+                                'data-id="' + data.id_subkriteria +
                                 '">Hapus</button>' +
                                 '</div>' +
                                 '</div>';
