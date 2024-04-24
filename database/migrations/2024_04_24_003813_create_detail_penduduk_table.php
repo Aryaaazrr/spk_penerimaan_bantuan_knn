@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('subkriteria', function (Blueprint $table) {
-            $table->id('id_subkriteria');
+        Schema::create('detail_penduduk', function (Blueprint $table) {
+            $table->unsignedBigInteger('id_penduduk')->required();
+            $table->foreign('id_penduduk')->references('id_penduduk')->on('penduduk')->onDelete('cascade')->onUpdate('cascade');
             $table->unsignedBigInteger('id_kriteria')->required();
             $table->foreign('id_kriteria')->references('id_kriteria')->on('kriteria')->onDelete('cascade')->onUpdate('cascade');
-            $table->string('subkriteria');
-            $table->string('kriteria');
-            $table->string('nilai');
+            $table->unsignedBigInteger('id_subkriteria')->required();
+            $table->foreign('id_subkriteria')->references('id_subkriteria')->on('subkriteria')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('subkriteria');
+        Schema::dropIfExists('detail_penduduk');
     }
 };

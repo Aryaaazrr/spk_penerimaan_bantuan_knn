@@ -12,13 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('data_training', function (Blueprint $table) {
-            $table->id();
-            $table->string('nama');
-            $table->string('usia');
-            $table->string('pekerjaan');
-            $table->string('gaji');
-            $table->string('tanggungan');
-            $table->string('status_rumah');
+            $table->id('id_training');
+            $table->unsignedBigInteger('id_penduduk')->required();
+            $table->foreign('id_penduduk')->references('id_penduduk')->on('penduduk')->onDelete('cascade')->onUpdate('cascade');
             $table->enum('keputusan', ['Layak', 'Tidak Layak'])->nullable();
             $table->timestamps();
         });
