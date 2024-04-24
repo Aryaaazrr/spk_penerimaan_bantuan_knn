@@ -20,4 +20,9 @@ class Kriteria extends Model
     {
         return $this->hasMany(DetailKriteria::class, 'id_kriteria', 'id_kriteria');
     }
+    
+    public function detail_penduduk()
+    {
+        return $this->hasMany(DetailPenduduk::class, 'id_kriteria', 'id_kriteria');
+    }
 }
