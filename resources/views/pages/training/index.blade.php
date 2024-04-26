@@ -71,6 +71,16 @@
                                                                     </select>
                                                                 </div>
                                                             @endforeach
+                                                            <div class="form-group">
+                                                                <label for="">Keputusan</label>
+                                                                <select class="form-control select2" id="select2"
+                                                                    name="keputusan" style="width: 100%;" required>
+                                                                    <option disabled selected>Pilih
+                                                                        Keputusan </option>
+                                                                    <option value="Layak">Layak</option>
+                                                                    <option value="Tidak Layak">Tidak Layak</option>
+                                                                </select>
+                                                            </div>
                                                         </div>
                                                         <div class="modal-footer justify-content-between">
                                                             <button type="button" class="btn btn-default"
@@ -150,17 +160,25 @@
                                         <select class="form-control select2" id="subkriteria"
                                             name="{{ str_replace(' ', '_', $kriteriaItem->nama) }}_kriteria"
                                             style="width: 100%;" required>
-                                            <option disabled selected>Pilih
+                                            <option disabled>Pilih
                                                 {{ $kriteriaItem->nama }}</option>
-                                            {{-- <option value="{{ $detail->id_subkriteria }}">
-                                                {{ $detail->subkriteria }}</option> --}}
-                                            {{-- @foreach ($detailKriteria->where('kriteria', $kriteriaItem->nama) as $detail)
-                                                <option value="{{ $detail->id_subkriteria }}">
+                                            @foreach ($detailKriteria->where('kriteria', $kriteriaItem->nama) as $detail)
+                                                <option value="{{ $detail->id_subkriteria }}" selected>
                                                     {{ $detail->subkriteria }}</option>
-                                            @endforeach --}}
+                                            @endforeach
                                         </select>
                                     </div>
                                 @endforeach
+                                <div class="form-group">
+                                    <label for="">Keputusan</label>
+                                    <select class="form-control select2" id="keputusan" name="keputusan"
+                                        style="width: 100%;" required>
+                                        <option disabled selected>Pilih
+                                            Keputusan </option>
+                                        <option value="Layak">Layak</option>
+                                        <option value="Tidak Layak">Tidak Layak</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="modal-footer justify-content-between">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -242,7 +260,7 @@
                                 'data-target="#modal-edit" data-id="' + data.DT_RowIndex +
                                 '" data-rt="' + data.rt_rw + '" data-nik="' + data.nik +
                                 '" data-nama="' + data.nama + '" data-subkriteria=\'' +
-                                subkriteriaString + '\' data-nilai="' + data.nilai + '">' + 'Edit' +
+                                subkriteriaString + '\' data-nilai="' + data.nilai + '" data-keputusan="'+data.keputusan+'">' + 'Edit' +
                                 '</button>' +
                                 '<button type="button" class="btn btn-danger m-1" onclick="confirmDelete(' +
                                 data.DT_RowIndex + ')"' +
@@ -268,18 +286,20 @@
                 var nama = button.data('nama');
                 var subkriteria = button.data('subkriteria');
                 var nilai = button.data('nilai');
+                var keputusan = button.data('keputusan');
                 var modal = $(this);
 
-                modal.find('.modal-body #id_subkriteria').val(id_subkriteria);
+                modal.find('.modal-body #id_training').val(id_subkriteria);
                 modal.find('.modal-body #rt').val(rt);
                 modal.find('.modal-body #nik').val(nik);
                 modal.find('.modal-body #nama').val(nama);
+                modal.find('.modal-body #keputusan').val(keputusan);
 
                 var subkriteriaOptions = '';
-                for (var key in subkriteria) {
-                    subkriteriaOptions += '<option value="' + subkriteria[key] + '">' + key + '</option>';
-                }
-                modal.find('.modal-body #subkriteria').html(subkriteriaOptions);
+                // for (var key in subkriteria) {
+                //     subkriteriaOptions += '<option value="' + subkriteria[key] + '">' + key + '</option>';
+                // }
+                // modal.find('.modal-body #subkriteria').html(subkriteriaOptions);
             });
 
             $('.datatable-input').on('input', function() {

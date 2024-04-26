@@ -48,8 +48,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('training/{id}', [TrainingController::class, 'destroy'])->name('training.destroy');
 
     Route::get('analisa', [AnalisaController::class, 'index'])->name('analisa');
+    Route::get('analisa/data', [AnalisaController::class, 'show'])->name('analisa.data');
+    Route::get('analisa/klasifikasi', [AnalisaController::class, 'klasifikasi'])->name('analisa.klasifikasi');
+    Route::post('analisa', [AnalisaController::class, 'store'])->name('analisa.store');
 
     Route::get('laporan', [LaporanController::class, 'index'])->name('laporan');
+    Route::get('cetak-laporan', [LaporanController::class, 'printReport'])->name('laporan.cetak');
 
     Route::get('profile', [ProfileController::class, 'index'])->name('profile');
     Route::put('profile/update', [ProfileController::class, 'update'])->name('profile.update');

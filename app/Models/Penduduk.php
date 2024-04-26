@@ -25,4 +25,9 @@ class Penduduk extends Model
     {
         return $this->hasOne(Training::class, 'id_penduduk', 'id_penduduk');
     }
+    
+    public function testing()
+    {
+        return $this->hasOne(Testing::class, 'id_penduduk', 'id_penduduk');
+    }
 }

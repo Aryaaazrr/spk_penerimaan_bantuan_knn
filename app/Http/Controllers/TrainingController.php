@@ -74,6 +74,7 @@ class TrainingController extends Controller
             'rt' => 'required',
             'nik' => 'required|digits:16|unique:penduduk',
             'nama' => 'required',
+            'keputusan' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -123,6 +124,7 @@ class TrainingController extends Controller
 
             $training = new Training();
             $training->id_penduduk = $penduduk->id_penduduk;
+            $training->keputusan = $request->keputusan;
 
             if (!$training->save()) {
                 throw new \Exception('Gagal menyimpan data penduduk. Silahkan coba kembali.');
@@ -158,7 +160,70 @@ class TrainingController extends Controller
      */
     public function update(Request $request)
     {
-        dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'rt' => 'required',
+            'nik' => 'required|digits:16',
+            'nama' => 'required',
+            'keputusan' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        try {
+            $training = Training::find($request->id_training);
+
+            if ($training == null) {
+                throw new \Exception('Data training tidak ditemukan. Silahkan coba kembali.');
+            }
+
+            DB::beginTransaction();
+
+            $penduduk = Penduduk::where('nik', $request->nik)->first();
+            $penduduk->rt_rw = $request->rt;
+            $penduduk->nik = $request->nik;
+            $penduduk->nama = $request->nama;
+
+            if ($penduduk->save()) {
+                foreach ($request->all() as $key => $value) {
+                    if (strpos($key, '_kriteria') !== false) {
+                        $kriteriaNama = str_replace('_', ' ', preg_replace("/_kriteria$/", "", $key));
+                        $kriteria = Kriteria::where('nama', $kriteriaNama)->first();
+                        if ($kriteria) {
+                            $kriteriaId = $kriteria->id_kriteria;
+                            $subkriteriaId = $value;
+                            
+                            $detailPenduduk = DetailPenduduk::where('id_penduduk', $penduduk->id_penduduk);
+                            $detailPenduduk->id_kriteria = $kriteriaId;
+                            $detailPenduduk->id_subkriteria = $subkriteriaId;
+                            if (!$detailPenduduk->save()) {
+                                throw new \Exception('Gagal menyimpan detail penduduk.');
+                            }
+                        } else {
+                            throw new \Exception('Kriteria tidak ditemukan. Silahkan coba kembali.');
+                        }
+                    }
+                }
+            } else {
+                throw new \Exception('Gagal menyimpan data penduduk. Silahkan coba kembali.');
+            }
+
+            $training->keputusan = $request->keputusan;
+
+            if (!$training->save()) {
+                throw new \Exception('Gagal menyimpan data penduduk. Silahkan coba kembali.');
+            }
+
+            DB::commit();
+
+            return redirect()->route('training')->with('success', 'Data training berhasil ditambahkan.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return back()->withErrors(['error' => $e->getMessage()]);
+        }
     }
 
     /**

@@ -117,7 +117,7 @@ class SubKriteriaController extends Controller
         $detail->nilai = $request->nilai;
         $detail->save();
 
-        return redirect()->route('subkriteria')->with('success', 'Data subkriteria berhasil ditambahkan.');
+        return redirect()->route('subkriteria')->with('success', 'Data subkriteria berhasil diperbarui.');
     }
 
     /**

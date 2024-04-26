@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('data_training', function (Blueprint $table) {
-            $table->id('id_training');
+        Schema::create('data_testing', function (Blueprint $table) {
+            $table->id('id_testing');
             $table->unsignedBigInteger('id_penduduk')->required();
             $table->foreign('id_penduduk')->references('id_penduduk')->on('penduduk')->onDelete('cascade')->onUpdate('cascade');
             $table->enum('keputusan', ['Layak', 'Tidak Layak'])->nullable();
-            $table->double('distance')->nullable();
-            $table->integer('rangking')->nullable();
-            $table->enum('pilihan', ['Ya', 'Tidak'])->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('data_training');
+        Schema::dropIfExists('data_testing');
     }
 };

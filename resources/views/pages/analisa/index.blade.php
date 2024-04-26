@@ -14,7 +14,7 @@
             </div>
         </div>
 
-        <!-- Main content -->
+        <!-- Form content -->
         <section class="content">
             <div class="container-fluid">
                 <!-- Main row -->
@@ -26,7 +26,7 @@
                             <div class="card-header">
                                 <h3 class="card-title">Analisa Metode KNN</h3>
                             </div>
-                            <form action="{{ route('training.store') }}" method="POST" onsubmit="return validateForm()">
+                            <form action="{{ route('analisa.store') }}" method="POST" onsubmit="return validateForm()">
                                 @csrf
                                 <div class="card-body">
                                     <div class="form-group">
@@ -74,7 +74,7 @@
         </section>
         <!-- /.content -->
 
-        <!-- Main content -->
+        <!-- Training content -->
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
@@ -113,7 +113,7 @@
         </section>
         <!-- /.content -->
 
-        <!-- Main content -->
+        <!-- Testing content -->
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
@@ -152,7 +152,7 @@
         </section>
         <!-- /.content -->
 
-        <!-- Main content -->
+        <!-- Distance content -->
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
@@ -172,7 +172,7 @@
                                             @foreach ($kriteria as $item)
                                                 <th>{{ $item->nama }}</th>
                                             @endforeach
-                                            <th>Keputusan</th>
+                                            <th>Encludean Distance</th>
                                         </tr>
                                     </thead>
                                     <tbody class="text-center">
@@ -191,7 +191,7 @@
         </section>
         <!-- /.content -->
 
-        <!-- Main content -->
+        <!-- Klasifikasi content -->
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
@@ -208,9 +208,9 @@
                                             <th>RT/RW</th>
                                             <th>NIK</th>
                                             <th>Nama Lengkap</th>
-                                            @foreach ($kriteria as $item)
-                                                <th>{{ $item->nama }}</th>
-                                            @endforeach
+                                            <th>Encludean Distance</th>
+                                            <th>Rangking</th>
+                                            <th>Pilihan</th>
                                             <th>Keputusan</th>
                                         </tr>
                                     </thead>
@@ -240,7 +240,7 @@
                                 <h3 class="card-title">Kesimpulan</h3>
                             </div>
                             <div class="card-body">
-                                <h1>Hasil Analisa : </h1>
+                                <h1>Hasil Analisa : {{ $kesimpulan }}</h1>
                             </div>
                             <!-- /.card-body -->
                         </div>
@@ -277,6 +277,51 @@
     <script>
         $(document).ready(function() {
             $("#myTableTraining").DataTable({
+                processing: true,
+                ordering: true,
+                responsive: true,
+                serverSide: true,
+                ajax: "{{ route('training') }}",
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex'
+                    },
+                    {
+                        data: 'rt_rw',
+                        name: 'rt_rw'
+                    },
+                    {
+                        data: 'nik',
+                        name: 'nik'
+                    },
+                    {
+                        data: 'nama',
+                        name: 'nama'
+                    },
+                    @foreach ($kriteria as $kriteriaItem)
+                        {
+                            data: 'subkriteria.{{ $kriteriaItem->nama }}',
+                            name: '{{ $kriteriaItem->nama }}',
+                            render: function(data) {
+                                return data ? data : 'N/A';
+                            }
+                        },
+                    @endforeach {
+                        data: 'keputusan',
+                        name: 'keputusan',
+                        render: function(data) {
+                            return data ? data : '?';
+                        }
+                    }
+                ],
+                rowCallback: function(row, data, index) {
+                    var dt = this.api();
+                    $(row).attr('data-id', data.id);
+                    $('td:eq(0)', row).html(dt.page.info().start + index + 1);
+                }
+            });
+
+            $("#myTableTesting").DataTable({
                 processing: true,
                 ordering: true,
                 responsive: true,
@@ -320,9 +365,94 @@
                     $('td:eq(0)', row).html(dt.page.info().start + index + 1);
                 }
             });
-            $("#myTableTesting").DataTable({});
-            $("#myTableEncludean").DataTable({});
-            $("#myTableKlasifikasi").DataTable({});
+
+            $("#myTableEncludean").DataTable({
+                processing: true,
+                ordering: true,
+                responsive: true,
+                serverSide: true,
+                ajax: '{{ route('analisa.data') }}',
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex'
+                    },
+                    {
+                        data: 'rt_rw',
+                        name: 'rt_rw'
+                    },
+                    {
+                        data: 'nik',
+                        name: 'nik'
+                    },
+                    {
+                        data: 'nama',
+                        name: 'nama'
+                    },
+                    @foreach ($kriteria as $kriteriaItem)
+                        {
+                            data: 'subkriteria.{{ $kriteriaItem->nama }}',
+                            name: '{{ $kriteriaItem->nama }}',
+                            render: function(data) {
+                                return data ? data : '0';
+                            }
+                        },
+                    @endforeach {
+                        data: 'distance',
+                        name: 'distance',
+                        render: function(data) {
+                            return data ? data : '?';
+                        }
+                    }
+                ],
+                rowCallback: function(row, data, index) {
+                    var dt = this.api();
+                    $(row).attr('data-id', data.id);
+                    $('td:eq(0)', row).html(dt.page.info().start + index + 1);
+                }
+            });
+
+            $("#myTableKlasifikasi").DataTable({
+                processing: true,
+                ordering: true,
+                responsive: true,
+                serverSide: true,
+                ajax: '{{ route('analisa.klasifikasi') }}',
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex'
+                    },
+                    {
+                        data: 'rt_rw',
+                        name: 'rt_rw'
+                    },
+                    {
+                        data: 'nik',
+                        name: 'nik'
+                    },
+                    {
+                        data: 'nama',
+                        name: 'nama'
+                    },
+                    {
+                        data: 'distance',
+                        name: 'distance',
+                    },
+                    {
+                        data: 'rangking',
+                        name: 'rangking',
+                    },
+                    {
+                        data: 'pilihan',
+                        name: 'pilihan',
+                    },
+                    {
+                        data: 'keputusan',
+                        name: 'keputusan',
+                    }
+                ],
+                order: [[5, 'asc']],
+            });
+
             $('.datatable-input').on('input', function() {
                 var searchText = $(this).val().toLowerCase();
 
@@ -336,5 +466,21 @@
                 });
             });
         });
+
+        function validateForm() {
+            var selects = document.querySelectorAll('#select2');
+
+            for (var i = 0; i < selects.length; i++) {
+                if (!selects[i].value) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Mohon pilih semua kriteria sebelum menyimpan.'
+                    });
+                    return false;
+                }
+            }
+            return true;
+        }
     </script>
 @endsection

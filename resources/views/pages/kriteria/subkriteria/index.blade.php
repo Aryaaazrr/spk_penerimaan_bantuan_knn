@@ -230,6 +230,7 @@
                 modal.find('.modal-body #kriteria option[value="' + kriteria + '"]').prop('selected', true);
                 modal.find('.modal-body #nilai').val(nilai);
             });
+            
             $('.datatable-input').on('input', function() {
                 var searchText = $(this).val().toLowerCase();
 
