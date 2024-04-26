@@ -75,7 +75,7 @@ class AnalisaController extends Controller
         $kriteria = Kriteria::all();
         $detailKriteria = DetailKriteria::all();
         $kesimpulan = $request->session()->get('kesimpulan');
-        
+
         if ($request->ajax()) {
             $testingId = $request->session()->get('latest_testing_id');
             $testing = Testing::with('penduduk')->find($testingId);
@@ -120,23 +120,24 @@ class AnalisaController extends Controller
         $testing = Testing::with('penduduk')->find($testingId);
 
         if ($testing) {
-            $kesimpulanLayak = Training::where('pilihan', 'Ya')->where('keputusan', 'Layak')->count();
-            $kesimpulanTidakLayak = Training::where('pilihan', 'Ya')->where('keputusan', 'Tidak Layak')->count();
-            if ($kesimpulanLayak > $kesimpulanTidakLayak) {
-                $kesimpulan = 'Layak';
-                $testing->keputusan = $kesimpulan;
-                $testing->save();
-                $request->session()->put('kesimpulan', $kesimpulan);
-            } else {
-                $kesimpulan = 'Tidak Layak';
-                $testing->keputusan = $kesimpulan;
-                $testing->save();
-                $request->session()->put('kesimpulan', $kesimpulan);
-            }
+            // $kesimpulanLayak = Training::where('pilihan', 'Ya')->where('keputusan', 'Layak')->count();
+            // $kesimpulanTidakLayak = Training::where('pilihan', 'Ya')->where('keputusan', 'Tidak Layak')->count();
+            // if ($kesimpulanLayak > $kesimpulanTidakLayak) {
+            //     $kesimpulan = 'Layak';
+            //     $testing->keputusan = $kesimpulan;
+            //     $testing->save();
+            //     $request->session()->put('kesimpulan', $kesimpulan);
+            // } else {
+            //     $kesimpulan = 'Tidak Layak';
+            //     $testing->keputusan = $kesimpulan;
+            //     $testing->save();
+            //     $request->session()->put('kesimpulan', $kesimpulan);
+            // }
             $training = Training::with('penduduk')->get();
+            $trainingSort = $training->sortBy('rangking');
             $rowData = [];
 
-            foreach ($training as $row) {
+            foreach ($trainingSort as $row) {
                 $penduduk = $row->penduduk;
 
                 $rowData[] = [
@@ -307,6 +308,20 @@ class AnalisaController extends Controller
 
                     $trainingEntry->save();
                     $rank++;
+                }
+                
+                $kesimpulanLayak = Training::where('pilihan', 'Ya')->where('keputusan', 'Layak')->count();
+                $kesimpulanTidakLayak = Training::where('pilihan', 'Ya')->where('keputusan', 'Tidak Layak')->count();
+                if ($kesimpulanLayak > $kesimpulanTidakLayak) {
+                    $kesimpulan = 'Layak';
+                    $testing->keputusan = $kesimpulan;
+                    $testing->save();
+                    $request->session()->put('kesimpulan', $kesimpulan);
+                } else {
+                    $kesimpulan = 'Tidak Layak';
+                    $testing->keputusan = $kesimpulan;
+                    $testing->save();
+                    $request->session()->put('kesimpulan', $kesimpulan);
                 }
 
                 $rowData[] = [
