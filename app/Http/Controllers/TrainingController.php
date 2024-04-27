@@ -186,18 +186,21 @@ class TrainingController extends Controller
             $penduduk->rt_rw = $request->rt;
             $penduduk->nik = $request->nik;
             $penduduk->nama = $request->nama;
-            
+
             if ($penduduk->save()) {
+                $detailPenduduk = DetailPenduduk::where('id_penduduk', $penduduk->id_penduduk)->get();
+                foreach ($detailPenduduk as $item) {
+                    $item->delete();
+                }
+                // dd($detailPenduduk);
                 foreach ($request->all() as $key => $value) {
                     if (strpos($key, '_kriteria') !== false) {
-                        $detailPenduduk = DetailPenduduk::where('id_penduduk', $penduduk->id_penduduk)->first();
-                        $detailPenduduk->delete();
                         $kriteriaNama = str_replace('_', ' ', preg_replace("/_kriteria$/", "", $key));
                         $kriteria = Kriteria::where('nama', $kriteriaNama)->first();
                         if ($kriteria) {
                             $kriteriaId = $kriteria->id_kriteria;
                             $subkriteriaId = $value;
-                            
+
                             $detailPenduduk = new DetailPenduduk();
                             $detailPenduduk->id_penduduk = $penduduk->id_penduduk;
                             $detailPenduduk->id_kriteria = $kriteriaId;
