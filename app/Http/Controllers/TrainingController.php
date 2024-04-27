@@ -188,10 +188,10 @@ class TrainingController extends Controller
             $penduduk->nama = $request->nama;
             
             if ($penduduk->save()) {
-                $detailPenduduk = DetailPenduduk::where('id_penduduk', $penduduk->id_penduduk)->first();
-                $detailPenduduk->delete();
                 foreach ($request->all() as $key => $value) {
                     if (strpos($key, '_kriteria') !== false) {
+                        $detailPenduduk = DetailPenduduk::where('id_penduduk', $penduduk->id_penduduk)->first();
+                        $detailPenduduk->delete();
                         $kriteriaNama = str_replace('_', ' ', preg_replace("/_kriteria$/", "", $key));
                         $kriteria = Kriteria::where('nama', $kriteriaNama)->first();
                         if ($kriteria) {
