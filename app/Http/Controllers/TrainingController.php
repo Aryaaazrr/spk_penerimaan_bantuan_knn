@@ -186,8 +186,10 @@ class TrainingController extends Controller
             $penduduk->rt_rw = $request->rt;
             $penduduk->nik = $request->nik;
             $penduduk->nama = $request->nama;
-
+            
             if ($penduduk->save()) {
+                $detailPenduduk = DetailPenduduk::where('id_penduduk', $penduduk->id_penduduk)->first();
+                $detailPenduduk->delete();
                 foreach ($request->all() as $key => $value) {
                     if (strpos($key, '_kriteria') !== false) {
                         $kriteriaNama = str_replace('_', ' ', preg_replace("/_kriteria$/", "", $key));
@@ -196,7 +198,8 @@ class TrainingController extends Controller
                             $kriteriaId = $kriteria->id_kriteria;
                             $subkriteriaId = $value;
                             
-                            $detailPenduduk = DetailPenduduk::where('id_penduduk', $penduduk->id_penduduk);
+                            $detailPenduduk = new DetailPenduduk();
+                            $detailPenduduk->id_penduduk = $penduduk->id_penduduk;
                             $detailPenduduk->id_kriteria = $kriteriaId;
                             $detailPenduduk->id_subkriteria = $subkriteriaId;
                             if (!$detailPenduduk->save()) {
@@ -219,7 +222,7 @@ class TrainingController extends Controller
 
             DB::commit();
 
-            return redirect()->route('training')->with('success', 'Data training berhasil ditambahkan.');
+            return redirect()->route('training')->with('success', 'Data training berhasil diperbarui.');
         } catch (\Exception $e) {
             DB::rollback();
             return back()->withErrors(['error' => $e->getMessage()]);
@@ -233,7 +236,8 @@ class TrainingController extends Controller
     {
         try {
             $training = Training::find($id);
-            $training->delete();
+            $penduduk = Penduduk::where('id_penduduk', $training->id_penduduk)->first();
+            $penduduk->delete();
             return response()->json(['message' => 'Data training berhasil dihapus'], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Terjadi kesalahan saat menghapus data'], 500);

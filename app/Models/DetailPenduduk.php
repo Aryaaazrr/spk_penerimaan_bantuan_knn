@@ -9,6 +9,7 @@ class DetailPenduduk extends Model
 {
     use HasFactory;
     protected $table = 'detail_penduduk';
+    protected $primaryKey = 'id';
     protected $guarded = [];
     protected $casts = [
         'created_at' => 'datetime',
