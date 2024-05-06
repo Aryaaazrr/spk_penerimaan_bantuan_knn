@@ -14,7 +14,7 @@ class AuthController extends Controller
      */
     public function index()
     {
-        return view('index');
+        // return view('index');
     }
 
     /**
@@ -86,6 +86,6 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
         $request->session()->forget('latest_testing_id');
         $request->session()->forget('kesimpulan');
-        return redirect('/');
+        return redirect('login');
     }
 }

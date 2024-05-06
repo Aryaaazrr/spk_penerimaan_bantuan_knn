@@ -33,7 +33,7 @@
 
                     <div class="social-auth-links text-center mt-2 mb-3">
                         <button type="submit" class="btn btn-primary btn-block">Login</button>
-                        <a href="/" class="btn btn-block btn-danger">Kembali</a>
+                        {{-- <a href="/" class="btn btn-block btn-danger">Kembali</a> --}}
                     </div>
                 </form>
             </div>

@@ -22,9 +22,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('guest')->group(function () {
-    Route::get('/', [AuthController::class, 'index'])->name('index');
-    Route::get('login', [AuthController::class, 'create'])->name('login');
-    Route::post('login', [AuthController::class, 'store']);
+    // Route::get('/', [AuthController::class, 'index'])->name('index');
+    Route::get('/', [AuthController::class, 'create'])->name('login');
+    Route::post('/', [AuthController::class, 'store']);
 });
 
 Route::middleware('auth')->group(function () {

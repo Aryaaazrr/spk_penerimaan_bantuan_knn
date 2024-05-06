@@ -43,6 +43,7 @@
                 <th>RT/RW</th>
                 <th>NIK</th>
                 <th>Nama</th>
+                <th>Keputusan</th>
             </tr>
         </thead>
         <tbody>
@@ -52,6 +53,7 @@
                     <td>{{ $test->penduduk->rt_rw }}</td>
                     <td>{{ $test->penduduk->nik }}</td>
                     <td>{{ $test->penduduk->nama }}</td>
+                    <td>{{ $test->keputusan }}</td>
                 </tr>
             @endforeach
         </tbody>

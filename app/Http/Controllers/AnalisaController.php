@@ -15,57 +15,57 @@ use Yajra\DataTables\DataTables;
 
 class AnalisaController extends Controller
 {
-    public function calculateEncludeanDistance($testing, $trainingData)
-    {
-        $encludeanDistances = [];
+    // public function calculateEncludeanDistance($testing, $trainingData)
+    // {
+    //     $encludeanDistances = [];
 
-        foreach ($trainingData as $training) {
-            $distance = $this->calculateDistance($testing, $training);
-            $encludeanDistances[] = [
-                'data' => $training,
-                'distance' => $distance
-            ];
-        }
+    //     foreach ($trainingData as $training) {
+    //         $distance = $this->calculateDistance($testing, $training);
+    //         $encludeanDistances[] = [
+    //             'data' => $training,
+    //             'distance' => $distance
+    //         ];
+    //     }
 
-        usort($encludeanDistances, function ($a, $b) {
-            return $a['distance'] <=> $b['distance'];
-        });
+    //     usort($encludeanDistances, function ($a, $b) {
+    //         return $a['distance'] <=> $b['distance'];
+    //     });
 
-        return $encludeanDistances;
-    }
+    //     return $encludeanDistances;
+    // }
 
-    public function calculateDistance($testing, $training)
-    {
-        $distance = $this->euclideanDistance($testing, $training);
+    // public function calculateDistance($testing, $training)
+    // {
+    //     $distance = $this->euclideanDistance($testing, $training);
 
-        return $distance;
-    }
+    //     return $distance;
+    // }
 
-    public function euclideanDistance($testing, $training)
-    {
-        $testingDetailPenduduk = $testing->penduduk->detail_penduduk;
-        $trainingDetailPenduduk = $training->penduduk->detail_penduduk;
-        $totalSquaredDifference = 0;
+    // public function euclideanDistance($testing, $training)
+    // {
+    //     $testingDetailPenduduk = $testing->penduduk->detail_penduduk;
+    //     $trainingDetailPenduduk = $training->penduduk->detail_penduduk;
+    //     $totalSquaredDifference = 0;
 
-        foreach ($testingDetailPenduduk as $testingDetail) {
-            $testingSubkriteriaId = $testingDetail->id_subkriteria;
-            $testingSubkriteriaValue = $testingDetail->detail_kriteria->nilai;
+    //     foreach ($testingDetailPenduduk as $testingDetail) {
+    //         $testingSubkriteriaId = $testingDetail->id_subkriteria;
+    //         $testingSubkriteriaValue = $testingDetail->detail_kriteria->nilai;
 
-            foreach ($trainingDetailPenduduk as $trainingDetail) {
-                if ($testingDetail->id_kriteria == $trainingDetail->id_kriteria) {
-                    $trainingSubkriteriaValue = $trainingDetail->detail_kriteria->nilai;
+    //         foreach ($trainingDetailPenduduk as $trainingDetail) {
+    //             if ($testingDetail->id_kriteria == $trainingDetail->id_kriteria) {
+    //                 $trainingSubkriteriaValue = $trainingDetail->detail_kriteria->nilai;
 
-                    $difference = $testingSubkriteriaValue - $trainingSubkriteriaValue;
-                    $squaredDifference = $difference * $difference;
-                    $totalSquaredDifference += $squaredDifference;
-                }
-            }
-        }
+    //                 $difference = $testingSubkriteriaValue - $trainingSubkriteriaValue;
+    //                 $squaredDifference = $difference * $difference;
+    //                 $totalSquaredDifference += $squaredDifference;
+    //             }
+    //         }
+    //     }
 
-        $euclideanDistance = sqrt($totalSquaredDifference);
+    //     $euclideanDistance = sqrt($totalSquaredDifference);
 
-        return $euclideanDistance;
-    }
+    //     return $euclideanDistance;
+    // }
 
     /**
      * Display a listing of the resource.
@@ -253,92 +253,117 @@ class AnalisaController extends Controller
     public function show(Request $request)
     {
         $testingId = $request->session()->get('latest_testing_id');
-        $testing = Testing::with('penduduk')->find($testingId);
+        $testing = Testing::with('penduduk.detail_penduduk.detail_kriteria')->find($testingId);
 
-        if ($testing) {
-            $trainingData = Training::with('penduduk')->get();
-            $rowData = [];
-
-            foreach ($trainingData as $row) {
-                $penduduk = $row->penduduk;
-                $detailPendudukTesting = $testing->penduduk->detail_penduduk;
-                $detailPendudukTraining = $row->penduduk->detail_penduduk;
-                $squaredDifferences = [];
-                $subkriteriaData = [];
-
-                foreach ($detailPendudukTesting as $testingDetail) {
-                    $testingSubkriteriaId = $testingDetail->id_subkriteria;
-                    $testingSubkriteriaValue = $testingDetail->detail_kriteria->nilai;
-
-                    foreach ($detailPendudukTraining as $trainingDetail) {
-                        if ($testingDetail->id_kriteria == $trainingDetail->id_kriteria) {
-                            $trainingSubkriteriaValue = $trainingDetail->detail_kriteria->nilai;
-
-                            $difference = pow($testingSubkriteriaValue - $trainingSubkriteriaValue, 2);
-                            $squaredDifferences[] = $difference;
-
-                            $kriteria = Kriteria::find($trainingDetail->id_kriteria);
-                            $subkriteria = DetailKriteria::find($trainingDetail->id_subkriteria);
-
-                            if ($kriteria && $subkriteria) {
-                                $subkriteriaData[$kriteria->nama] = $difference;
-                            }
-                        }
-                    }
-                }
-
-                $euclideanDistance = sqrt(array_sum($squaredDifferences));
-
-                $trainingEntry = Training::find($row->id_training);
-                $trainingEntry->distance = number_format($euclideanDistance, 2);
-                $trainingEntry->save();
-
-                $sortedTrainingData = $trainingData->sortBy('distance');
-
-                $rank = 1;
-                foreach ($sortedTrainingData as $row) {
-                    $trainingEntry = Training::find($row->id_training);
-                    $trainingEntry->rangking = $rank;
-
-                    if ($rank <= 3) {
-                        $trainingEntry->pilihan = 'Ya';
-                    } else {
-                        $trainingEntry->pilihan = 'Tidak';
-                    }
-
-                    $trainingEntry->save();
-                    $rank++;
-                }
-                
-                $kesimpulanLayak = Training::where('pilihan', 'Ya')->where('keputusan', 'Layak')->count();
-                $kesimpulanTidakLayak = Training::where('pilihan', 'Ya')->where('keputusan', 'Tidak Layak')->count();
-                if ($kesimpulanLayak > $kesimpulanTidakLayak) {
-                    $kesimpulan = 'Layak';
-                    $testing->keputusan = $kesimpulan;
-                    $testing->save();
-                    $request->session()->put('kesimpulan', $kesimpulan);
-                } else {
-                    $kesimpulan = 'Tidak Layak';
-                    $testing->keputusan = $kesimpulan;
-                    $testing->save();
-                    $request->session()->put('kesimpulan', $kesimpulan);
-                }
-
-                $rowData[] = [
-                    'DT_RowIndex' => $row->id_training,
-                    'id_penduduk' => $penduduk->id_penduduk,
-                    'rt_rw' => $penduduk->rt_rw,
-                    'nik' => $penduduk->nik,
-                    'nama' => $penduduk->nama,
-                    'subkriteria' => $subkriteriaData,
-                    'distance' => number_format($euclideanDistance, 2),
-                ];
-            }
-
-            return DataTables::of($rowData)->toJson();
-        } else {
+        if (!$testing) {
             return response()->json([]);
         }
+
+        $trainingData = Training::with('penduduk.detail_penduduk.detail_kriteria')->get();
+        $rowData = [];
+
+        foreach ($trainingData as $row) {
+            $euclideanDistance = $this->calculateEuclideanDistance($testing->penduduk->detail_penduduk, $row->penduduk->detail_penduduk);
+
+            $this->updateTrainingEntry($row, $euclideanDistance);
+
+            $rowData[] = [
+                'DT_RowIndex' => $row->id_training,
+                'id_penduduk' => $row->penduduk->id_penduduk,
+                'rt_rw' => $row->penduduk->rt_rw,
+                'nik' => $row->penduduk->nik,
+                'nama' => $row->penduduk->nama,
+                'subkriteria' => $this->calculateSubkriteriaData($testing->penduduk->detail_penduduk, $row->penduduk->detail_penduduk),
+                'distance' => number_format($euclideanDistance, 2),
+            ];
+        }
+
+        $sortedTrainingData = collect($rowData)->sortBy('distance');
+
+        $rank = 1;
+        foreach ($sortedTrainingData as $sortedRow) {
+            $trainingEntry = Training::find($sortedRow['DT_RowIndex']);
+            $trainingEntry->rangking = $rank;
+
+            if ($rank <= 3) {
+                $trainingEntry->pilihan = 'Ya';
+            } else {
+                $trainingEntry->pilihan = 'Tidak';
+            }
+
+            $trainingEntry->save();
+            $rank++;
+        }
+
+        $kesimpulanLayak = Training::where('pilihan', 'Ya')->where('keputusan', 'Layak')->count();
+        $kesimpulanTidakLayak = Training::where('pilihan', 'Ya')->where('keputusan', 'Tidak Layak')->count();
+
+        if ($kesimpulanLayak > $kesimpulanTidakLayak) {
+            $kesimpulan = 'Layak';
+        } else {
+            $kesimpulan = 'Tidak Layak';
+        }
+
+        $testing->keputusan = $kesimpulan;
+        $testing->save();
+        $request->session()->put('kesimpulan', $kesimpulan);
+
+        return DataTables::of($rowData)->toJson();
+    }
+
+    private function calculateEuclideanDistance($testingDetails, $trainingDetails)
+    {
+        $squaredDifferences = [];
+
+        foreach ($testingDetails as $testingDetail) {
+            $testingSubkriteriaValue = $testingDetail->detail_kriteria->nilai;
+
+            foreach ($trainingDetails as $trainingDetail) {
+                if ($testingDetail->id_kriteria == $trainingDetail->id_kriteria) {
+                    $trainingSubkriteriaValue = $trainingDetail->detail_kriteria->nilai;
+
+                    $difference = pow($testingSubkriteriaValue - $trainingSubkriteriaValue, 2);
+                    $squaredDifferences[] = $difference;
+                    break;
+                }
+            }
+        }
+
+        return sqrt(array_sum($squaredDifferences));
+    }
+
+    private function updateTrainingEntry($row, $distance)
+    {
+        $row->distance = number_format($distance, 2);
+        $row->save();
+    }
+
+    private function calculateSubkriteriaData($testingDetails, $trainingDetails)
+    {
+        $subkriteriaData = [];
+
+        foreach ($testingDetails as $testingDetail) {
+            $testingSubkriteriaId = $testingDetail->id_subkriteria;
+            $testingSubkriteriaValue = $testingDetail->detail_kriteria->nilai;
+
+            foreach ($trainingDetails as $trainingDetail) {
+                if ($testingDetail->id_kriteria == $trainingDetail->id_kriteria) {
+                    $trainingSubkriteriaValue = $trainingDetail->detail_kriteria->nilai;
+                    $difference = pow($testingSubkriteriaValue - $trainingSubkriteriaValue, 2);
+
+                    $kriteria = Kriteria::find($trainingDetail->id_kriteria);
+                    $subkriteria = DetailKriteria::find($trainingDetail->id_subkriteria);
+
+                    if ($kriteria && $subkriteria) {
+                        $subkriteriaData[$kriteria->nama] = $difference;
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        return $subkriteriaData;
     }
 
     /**
